@@ -19,11 +19,22 @@
 
 <body>
 
+    <!-- ===============================
+         HEADER
+    ================================ -->
+
     <header>
+
         <h1>J.A.R.V.I.S</h1>
+
         <p>MOBILE EDITION</p>
+
     </header>
 
+
+    <!-- ===============================
+         ARC REACTOR CORE
+    ================================ -->
 
     <div class="core">
 
@@ -41,40 +52,76 @@
     </p>
 
 
+    <!-- ===============================
+         SYSTEM STATUS
+    ================================ -->
+
     <div class="status">
 
         <h2>SYSTEM STATUS</h2>
 
+
         <div class="row">
+
             <span>AI CORE</span>
-            <b id="ai-status" class="on">
+
+            <b
+                id="ai-status"
+                class="on"
+            >
                 ● ONLINE
             </b>
+
         </div>
 
+
         <div class="row">
+
             <span>NETWORK</span>
-            <b id="network-status" class="on">
+
+            <b
+                id="network-status"
+                class="on"
+            >
                 ● ONLINE
             </b>
+
         </div>
 
+
         <div class="row">
+
             <span>VOICE</span>
-            <b id="voice-status" class="on">
+
+            <b
+                id="voice-status"
+                class="on"
+            >
                 ● ONLINE
             </b>
+
         </div>
 
+
         <div class="row">
+
             <span>MEMORY</span>
-            <b id="memory-status" class="on">
+
+            <b
+                id="memory-status"
+                class="on"
+            >
                 ● ACTIVE
             </b>
+
         </div>
 
     </div>
 
+
+    <!-- ===============================
+         CHAT AREA
+    ================================ -->
 
     <div
         class="chat"
@@ -82,7 +129,14 @@
     ></div>
 
 
+    <!-- ===============================
+         INPUT AREA
+    ================================ -->
+
     <div class="input-area">
+
+
+        <!-- TEXT INPUT -->
 
         <input
             id="msg"
@@ -91,23 +145,66 @@
             autocomplete="off"
         >
 
-        <button id="send">
+
+        <!-- SEND BUTTON -->
+
+        <button
+            id="send"
+        >
             SEND
         </button>
 
+
+        <!-- VOICE BUTTON -->
+
         <button
             id="mic-btn"
-            aria-label="Voice input"
+            aria-label="Activate voice input"
         >
             🎙️
         </button>
 
-        <button id="clear-btn">
+
+        <!-- CAMERA / VISION BUTTON -->
+
+        <button
+            id="cam-btn"
+            aria-label="Analyze image"
+        >
+            📷
+        </button>
+
+
+        <!--
+            HIDDEN IMAGE INPUT
+
+            On mobile devices this can allow
+            camera/gallery selection.
+        -->
+
+        <input
+            id="img-input"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            style="display:none"
+        >
+
+
+        <!-- CLEAR MEMORY BUTTON -->
+
+        <button
+            id="clear-btn"
+        >
             CLEAR
         </button>
 
     </div>
 
+
+    <!-- ===============================
+         JAVASCRIPT
+    ================================ -->
 
     <script src="script.js"></script>
 
