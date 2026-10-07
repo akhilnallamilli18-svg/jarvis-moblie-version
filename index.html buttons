@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -132,27 +131,4 @@
 </body>
 
 </html>
-```
 
-This version matches the JavaScript I corrected above:
-
-* `chat` → chat display
-* `msg` → text input
-* `send` → EXECUTE button
-* `mic-btn` → voice input
-* `cam-btn` → image analysis
-* `img-input` → hidden image selector
-* `clear-btn` → memory clearing
-* `script.js` → your Gemini/J.A.R.V.I.S. brain
-
-So your project should now have:
-
-```text
-JARVIS/
-│
-├── index.html
-├── style.css
-└── script.js
-```
-
-**Replace your entire `index.html` with the code above.**
