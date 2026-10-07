@@ -1,31 +1,786 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>J.A.R.V.I.S</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>J.A.R.V.I.S - Mobile</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
+
 <body>
-<header><h1>J.A.R.V.I.S</h1><p>MOBILE EDITION</p></header>
-<div class="core">
-<div class="ring r1"></div>
-<div class="ring r2"></div>
-<div class="center"></div>
-</div>
-<p class="core-text">CORE ACTIVE</p>
-<div class="status">
-<h2>SYSTEM STATUS</h2>
-<div class="row"><span>AI CORE</span><b class="on">● ONLINE</b></div>
-<div class="row"><span>NETWORK</span><b class="on">● ONLINE</b></div>
-<div class="row"><span>VOICE</span><b class="off">○ LOCKED</b></div>
-<div class="row"><span>MEMORY</span><b class="off">○ LOCKED</b></div>
-</div>
-<div class="chat" id="chat"></div>
-<div class="input-area">
-<input id="msg" placeholder="Ask J.A.R.V.I.S...">
-<button id="send">SEND</button>  <button id="mic-btn">🎙️</button>
-</div>
-<script src="script.js"></script>
+
+    <!-- HEADER -->
+    <header>
+        <h1>J.A.R.V.I.S</h1>
+        <p>MOBILE EDITION</p>
+    </header>
+
+
+    <!-- CORE -->
+    <div class="core">
+
+        <div class="ring r1"></div>
+
+        <div class="ring r2"></div>
+
+        <div class="center"></div>
+
+    </div>
+
+    <p class="core-text">
+        CORE ACTIVE
+    </p>
+
+
+    <!-- SYSTEM STATUS -->
+    <div class="status">
+
+        <h2>SYSTEM STATUS</h2>
+
+        <div class="row">
+            <span>AI CORE</span>
+            <b id="ai-status" class="on">
+                ● ONLINE
+            </b>
+        </div>
+
+        <div class="row">
+            <span>NETWORK</span>
+            <b id="network-status" class="on">
+                ● ONLINE
+            </b>
+        </div>
+
+        <div class="row">
+            <span>VOICE</span>
+            <b id="voice-status" class="on">
+                ● ONLINE
+            </b>
+        </div>
+
+        <div class="row">
+            <span>MEMORY</span>
+            <b id="memory-status" class="on">
+                ● ACTIVE
+            </b>
+        </div>
+
+    </div>
+
+
+    <!-- CHAT -->
+    <div
+        class="chat"
+        id="chat"
+    ></div>
+
+
+    <!-- INPUT -->
+    <div class="input-area">
+
+        <input
+            id="msg"
+            type="text"
+            placeholder="Ask J.A.R.V.I.S..."
+            autocomplete="off"
+        >
+
+        <button id="send">
+            SEND
+        </button>
+
+        <button
+            id="mic-btn"
+            aria-label="Voice input"
+        >
+            🎙️
+        </button>
+
+        <button id="clear-btn">
+            CLEAR
+        </button>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="script.js"></script>
+
 </body>
+
 </html>
+```
+
+### 2. Replace your entire `script.js`
+
+I also changed the JavaScript so it updates the **VOICE** status automatically. If the browser supports speech recognition, it shows `● ONLINE`; otherwise it shows `○ UNAVAILABLE`.
+
+```javascript
+// =====================================================
+// J.A.R.V.I.S MOBILE EDITION
+// GEMINI + MEMORY + VOICE
+// =====================================================
+
+
+// =====================================================
+// 1. GEMINI API KEY
+// =====================================================
+
+let API_KEY = localStorage.getItem("jarvis_key");
+
+if (!API_KEY) {
+
+    API_KEY = prompt(
+        "Enter your Gemini API Key:"
+    );
+
+    if (API_KEY) {
+        localStorage.setItem(
+            "jarvis_key",
+            API_KEY
+        );
+    }
+}
+
+
+// =====================================================
+// 2. GEMINI MODELS
+// =====================================================
+
+const MODELS = [
+    "gemini-3.5-flash",
+    "gemini-3.1-flash-lite",
+    "gemini-flash-latest"
+];
+
+
+// =====================================================
+// 3. MEMORY
+// =====================================================
+
+let MEMORY = JSON.parse(
+    localStorage.getItem("jarvis_memory") || "[]"
+);
+
+
+function saveMemory() {
+
+    localStorage.setItem(
+        "jarvis_memory",
+        JSON.stringify(MEMORY)
+    );
+
+}
+
+
+// =====================================================
+// 4. HTML ELEMENTS
+// =====================================================
+
+const chat =
+    document.getElementById("chat");
+
+const input =
+    document.getElementById("msg");
+
+const sendBtn =
+    document.getElementById("send");
+
+const micBtn =
+    document.getElementById("mic-btn");
+
+const clearBtn =
+    document.getElementById("clear-btn");
+
+const aiStatus =
+    document.getElementById("ai-status");
+
+const networkStatus =
+    document.getElementById("network-status");
+
+const voiceStatus =
+    document.getElementById("voice-status");
+
+const memoryStatus =
+    document.getElementById("memory-status");
+
+
+// =====================================================
+// 5. LOAD MEMORY INTO CHAT
+// =====================================================
+
+MEMORY.forEach(m => {
+
+    add(
+        (m.role === "user"
+            ? "YOU: "
+            : "J.A.R.V.I.S: ") + m.text,
+
+        m.role === "user"
+            ? "user"
+            : "ai"
+    );
+
+});
+
+
+// =====================================================
+// 6. MEMORY STATUS
+// =====================================================
+
+if (memoryStatus) {
+
+    memoryStatus.innerText =
+        MEMORY.length > 0
+            ? "● ACTIVE"
+            : "● ACTIVE";
+
+}
+
+
+// =====================================================
+// 7. GEMINI BRAIN
+// =====================================================
+
+async function callGemini(promptText) {
+
+    const contents = MEMORY
+        .slice(-12)
+        .map(m => ({
+
+            role: m.role,
+
+            parts: [
+                {
+                    text: m.text
+                }
+            ]
+
+        }));
+
+
+    contents.push({
+
+        role: "user",
+
+        parts: [
+            {
+                text: promptText
+            }
+        ]
+
+    });
+
+
+    let lastErr;
+
+
+    for (const model of MODELS) {
+
+        try {
+
+            const url =
+                "https://generativelanguage.googleapis.com/v1beta/models/" +
+                model +
+                ":generateContent?key=" +
+                API_KEY;
+
+
+            const response =
+                await fetch(url, {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        contents: contents
+                    })
+
+                });
+
+
+            const data =
+                await response.json();
+
+
+            if (data.error) {
+
+                lastErr =
+                    new Error(
+                        data.error.message ||
+                        "Gemini API error"
+                    );
+
+
+                if (
+                    /high demand|temporary|quota|rate|unavailable|deprecated/i
+                        .test(
+                            data.error.message || ""
+                        )
+                ) {
+
+                    continue;
+
+                }
+
+                throw lastErr;
+
+            }
+
+
+            if (
+                !data.candidates ||
+                !data.candidates[0] ||
+                !data.candidates[0].content ||
+                !data.candidates[0].content.parts
+            ) {
+
+                throw new Error(
+                    "Invalid Gemini response."
+                );
+
+            }
+
+
+            return data.candidates[0]
+                .content
+                .parts[0]
+                .text;
+
+        }
+
+        catch (error) {
+
+            lastErr = error;
+
+        }
+
+    }
+
+
+    throw (
+        lastErr ||
+        new Error(
+            "Gemini connection failed."
+        )
+    );
+
+}
+
+
+// =====================================================
+// 8. ASK JARVIS
+// =====================================================
+
+async function askGemini(promptText) {
+
+    add(
+        "J.A.R.V.I.S: Thinking...",
+        "ai"
+    );
+
+
+    try {
+
+        const reply =
+            await callGemini(promptText);
+
+
+        // Save user message
+        MEMORY.push({
+
+            role: "user",
+
+            text: promptText
+
+        });
+
+
+        // Save JARVIS response
+        MEMORY.push({
+
+            role: "model",
+
+            text: reply
+
+        });
+
+
+        saveMemory();
+
+
+        chat.lastChild.innerText =
+            "J.A.R.V.I.S: " +
+            reply;
+
+
+        speak(reply);
+
+    }
+
+    catch (error) {
+
+        chat.lastChild.innerText =
+            "J.A.R.V.I.S: ERROR - " +
+            error.message;
+
+    }
+
+}
+
+
+// =====================================================
+// 9. SEND BUTTON
+// =====================================================
+
+if (sendBtn) {
+
+    sendBtn.onclick = () => {
+
+        const text =
+            input.value.trim();
+
+
+        if (!text) {
+            return;
+        }
+
+
+        add(
+            "YOU: " + text,
+            "user"
+        );
+
+
+        input.value = "";
+
+
+        askGemini(text);
+
+    };
+
+}
+
+
+// =====================================================
+// 10. ENTER KEY
+// =====================================================
+
+if (input) {
+
+    input.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                sendBtn.click();
+
+            }
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// 11. VOICE RECOGNITION
+// =====================================================
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+
+if (
+    SpeechRecognition &&
+    micBtn
+) {
+
+    // Voice is available
+    if (voiceStatus) {
+
+        voiceStatus.innerText =
+            "● ONLINE";
+
+        voiceStatus.className =
+            "on";
+
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang =
+        "en-US";
+
+
+    recognition.continuous =
+        false;
+
+
+    recognition.interimResults =
+        false;
+
+
+    // Start listening
+    micBtn.onclick = () => {
+
+        try {
+
+            recognition.start();
+
+            micBtn.innerText =
+                "🔴";
+
+            if (voiceStatus) {
+
+                voiceStatus.innerText =
+                    "● LISTENING";
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+
+    // Voice result
+    recognition.onresult =
+        event => {
+
+            const text =
+                event.results[0][0]
+                    .transcript;
+
+
+            add(
+                "YOU: " + text,
+                "user"
+            );
+
+
+            askGemini(text);
+
+        };
+
+
+    // Voice ended
+    recognition.onend =
+        () => {
+
+            micBtn.innerText =
+                "🎙️";
+
+
+            if (voiceStatus) {
+
+                voiceStatus.innerText =
+                    "● ONLINE";
+
+            }
+
+        };
+
+
+    // Voice error
+    recognition.onerror =
+        event => {
+
+            console.log(
+                "Voice error:",
+                event.error
+            );
+
+
+            micBtn.innerText =
+                "🎙️";
+
+
+            if (voiceStatus) {
+
+                voiceStatus.innerText =
+                    "● ONLINE";
+
+            }
+
+        };
+
+}
+
+else {
+
+    // Browser doesn't support voice
+    if (voiceStatus) {
+
+        voiceStatus.innerText =
+            "○ UNAVAILABLE";
+
+        voiceStatus.className =
+            "off";
+
+    }
+
+
+    if (micBtn) {
+
+        micBtn.disabled =
+            true;
+
+    }
+
+}
+
+
+// =====================================================
+// 12. TEXT TO SPEECH
+// =====================================================
+
+let voices = [];
+
+
+function loadVoices() {
+
+    voices =
+        speechSynthesis.getVoices();
+
+}
+
+
+loadVoices();
+
+
+speechSynthesis.onvoiceschanged =
+    loadVoices;
+
+
+function speak(text) {
+
+    if (!text) {
+        return;
+    }
+
+
+    speechSynthesis.cancel();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+
+    utterance.rate =
+        1.05;
+
+
+    utterance.pitch =
+        0.85;
+
+
+    const voice =
+        voices.find(
+            v =>
+                v.lang &&
+                v.lang.startsWith("en")
+        );
+
+
+    if (voice) {
+
+        utterance.voice =
+            voice;
+
+    }
+
+
+    speechSynthesis.speak(
+        utterance
+    );
+
+}
+
+
+// =====================================================
+// 13. CLEAR MEMORY
+// =====================================================
+
+if (clearBtn) {
+
+    clearBtn.onclick = () => {
+
+        MEMORY = [];
+
+        saveMemory();
+
+        chat.innerHTML = "";
+
+
+        add(
+            "SYSTEM: Memory cleared.",
+            "ai"
+        );
+
+
+        if (memoryStatus) {
+
+            memoryStatus.innerText =
+                "● ACTIVE";
+
+        }
+
+    };
+
+}
+
+
+// =====================================================
+// 14. ADD CHAT MESSAGE
+// =====================================================
+
+function add(text, who) {
+
+    const div =
+        document.createElement("div");
+
+
+    div.className =
+        "msg " + who;
+
+
+    div.innerText =
+        text;
+
+
+    chat.appendChild(div);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
