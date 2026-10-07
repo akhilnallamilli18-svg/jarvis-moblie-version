@@ -1,4 +1,3 @@
-```javascript
 // ===== 1. API KEY =====
 let API_KEY = localStorage.getItem("jarvis_key");
 
@@ -234,4 +233,3 @@ if (SpeechRecognition) {
 
 // ===== 11. STARTUP MESSAGE =====
 add("J.A.R.V.I.S: System ready.", "ai");
-```
