@@ -759,29 +759,21 @@ if (camBtn && imgInput) {
 
 
 // =====================================================
-// 16. GEMINI VISION
+// GEMINI VISION - FAST IMAGE ANALYSIS
 // =====================================================
 
-async function askVision(
-    base64,
-    mimeType,
-    question
-) {
-
+async function askVision(base64, mimeType, question) {
 
     addMessage(
         "J.A.R.V.I.S: Analyzing image...",
         "ai"
     );
 
-
     const messages =
         chat.querySelectorAll(".msg.ai");
 
-
     const visionMessage =
         messages[messages.length - 1];
-
 
     if (!API_KEY) {
 
@@ -789,149 +781,126 @@ async function askVision(
             "J.A.R.V.I.S: Gemini API key is missing.";
 
         return;
+    }
+
+    try {
+
+        // Use the fastest current multimodal model
+        const model = "gemini-3.1-flash-lite";
+
+        const url =
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+
+        // 30 second timeout
+        const controller =
+            new AbortController();
+
+        const timeout =
+            setTimeout(() => {
+                controller.abort();
+            }, 30000);
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        contents: [
+                            {
+                                parts: [
+
+                                    {
+                                        text:
+                                            question
+                                    },
+
+                                    {
+                                        inline_data: {
+                                            mime_type:
+                                                mimeType,
+
+                                            data:
+                                                base64
+                                        }
+                                    }
+
+                                ]
+                            }
+                        ]
+
+                    }),
+
+                    signal:
+                        controller.signal
+                }
+            );
+
+        clearTimeout(timeout);
+
+        const data =
+            await response.json();
+
+        console.log(
+            "Vision response:",
+            data
+        );
+
+        if (data.error) {
+
+            throw new Error(
+                data.error.message
+            );
+        }
+
+        const reply =
+            data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!reply) {
+
+            throw new Error(
+                "Gemini returned no image description."
+            );
+        }
+
+        visionMessage.textContent =
+            "J.A.R.V.I.S: " +
+            reply;
+
+        speak(reply);
 
     }
 
+    catch (error) {
 
-    let lastError = null;
+        console.error(
+            "VISION ERROR:",
+            error
+        );
 
-
-    for (const model of MODELS) {
-
-        try {
-
-            console.log(
-                "Vision model:",
-                model
-            );
-
-
-            const url =
-                `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
-
-
-            const response =
-                await fetch(
-                    url,
-                    {
-
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-
-                            contents: [
-
-                                {
-
-                                    parts: [
-
-                                        {
-                                            text:
-                                                question
-                                        },
-
-                                        {
-
-                                            inline_data: {
-
-                                                mime_type:
-                                                    mimeType,
-
-                                                data:
-                                                    base64
-
-                                            }
-
-                                        }
-
-                                    ]
-
-                                }
-
-                            ]
-
-                        })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (data.error) {
-
-                throw new Error(
-                    data.error.message
-                );
-
-            }
-
-
-            const reply =
-                data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-
-            if (!reply) {
-
-                throw new Error(
-                    "Gemini did not return an image analysis."
-                );
-
-            }
-
+        if (error.name === "AbortError") {
 
             visionMessage.textContent =
-                "J.A.R.V.I.S: " +
-                reply;
-
-
-            speak(reply);
-
-
-            aiStatus.textContent =
-                "● ONLINE";
-
-
-            aiStatus.className =
-                "on";
-
-
-            return;
+                "J.A.R.V.I.S: Vision request timed out after 30 seconds.";
 
         }
 
+        else {
 
-        catch(error) {
-
-            console.log(
-                "Vision model failed:",
-                model,
-                error
-            );
-
-
-            lastError =
-                error;
+            visionMessage.textContent =
+                "J.A.R.V.I.S: Vision error - " +
+                error.message;
 
         }
-
     }
-
-
-    visionMessage.textContent =
-        "J.A.R.V.I.S: VISION ERROR - " +
-        (lastError?.message ||
-        "Unable to analyze image.");
-
 }
-
 
 // =====================================================
 // 17. CLEAR MEMORY
