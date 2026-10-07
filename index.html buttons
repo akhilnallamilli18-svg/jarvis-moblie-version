@@ -1,0 +1,158 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>J.A.R.V.I.S</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+
+    <header>
+        <h1>J.A.R.V.I.S</h1>
+        <p>PERSONAL AI ASSISTANT</p>
+    </header>
+
+
+    <!-- ===== JARVIS CORE ===== -->
+
+    <div class="core">
+
+        <div class="ring r1"></div>
+
+        <div class="ring r2"></div>
+
+        <div class="center"></div>
+
+    </div>
+
+    <p class="core-text">
+        SYSTEM READY
+    </p>
+
+
+    <!-- ===== SYSTEM STATUS ===== -->
+
+    <div class="status">
+
+        <h2>SYSTEM DIAGNOSTICS</h2>
+
+        <div class="row">
+            <span>AI ENGINE</span>
+            <b class="on">● OPERATIONAL</b>
+        </div>
+
+        <div class="row">
+            <span>CONNECTION</span>
+            <b class="on">● ONLINE</b>
+        </div>
+
+        <div class="row">
+            <span>VOICE INTERFACE</span>
+            <b class="on">● READY</b>
+        </div>
+
+        <div class="row">
+            <span>LONG-TERM MEMORY</span>
+            <b class="on">● ACTIVE</b>
+        </div>
+
+    </div>
+
+
+    <!-- ===== CHAT AREA ===== -->
+
+    <div
+        class="chat"
+        id="chat"
+    ></div>
+
+
+    <!-- ===== INPUT AREA ===== -->
+
+    <div class="input-area">
+
+        <input
+            id="msg"
+            type="text"
+            placeholder="Enter a command for J.A.R.V.I.S..."
+            autocomplete="off"
+        >
+
+        <button id="send">
+            EXECUTE
+        </button>
+
+        <button
+            id="mic-btn"
+            aria-label="Activate voice input"
+        >
+            🎤
+        </button>
+
+        <button
+            id="cam-btn"
+            aria-label="Analyze image"
+        >
+            📷
+        </button>
+
+        <button id="clear-btn">
+            CLEAR MEMORY
+        </button>
+
+        <input
+            id="img-input"
+            type="file"
+            accept="image/*"
+            style="display: none;"
+        >
+
+    </div>
+
+
+    <!-- ===== JAVASCRIPT ===== -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
+```
+
+This version matches the JavaScript I corrected above:
+
+* `chat` → chat display
+* `msg` → text input
+* `send` → EXECUTE button
+* `mic-btn` → voice input
+* `cam-btn` → image analysis
+* `img-input` → hidden image selector
+* `clear-btn` → memory clearing
+* `script.js` → your Gemini/J.A.R.V.I.S. brain
+
+So your project should now have:
+
+```text
+JARVIS/
+│
+├── index.html
+├── style.css
+└── script.js
+```
+
+**Replace your entire `index.html` with the code above.**
